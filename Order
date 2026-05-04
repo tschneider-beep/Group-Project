@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fresh Roots Market — Farm Fresh, Every Saturday</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+        
+        <link rel="stylesheet" href="../products/product-detail.css">
+        <link rel="stylesheet" href="order.css">
+    </head>
+    <body>
+
+        <main class="order-page">
+            <section class="order-hero">
+                <h1>Pre-Order Your Market Box</h1>
+                <nav>
+                    <a href="index.html" class="logo">Fresh<span>Roots</span></a>
+                    <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">Our Story</a></li>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="order.html">Pre-Order</a></li>
+                    </ul>
+                    <a href="order.html" class="nav-btn">🛒 Pre-Order</a>
+                </nav>
+                <p>Select your items now and pick them up Saturday at the market.</p>
+            </section>
+
+            <form id="orderForm" class="order-form">
+                <!-- CUSTOMER INFO -->
+                <section class="customer-info">
+                    <h2>Customer Information</h2>
+
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="First name">
+                    <span class="error" id="firstNameError"></span>
+
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Last Name">
+                    <span class="error" id="lastNameError"></span>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="example@example.com">
+                    <span class="error" id="emailError"></span>
+
+                    <label for="pickupDate">Pickup Date</label>
+                    <input type="date" id="pickupDate">
+                    <span class="error" id="dateError"></span>
+
+                    <label for="pickupLocation">Pickup Location</label>
+                    <select id="pickupLocation">
+                        <option value="">Choose a location</option>
+                        <option value="Downtown Pavilion">Downtown Pavilion</option>
+                        <option value="Farm Stand">Farm Stand</option>
+                    </select>
+                    <span class="error" id="locationError"></span>
+                </section>
+
+                <!-- PRODUCTS -->
+                <section class="order-items">
+                    <h2>Choose Your Items</h2>
+
+                    <div class="order-row" data-price="12">
+                    <label for="honeyQty">🍯 Wildflower Honey ($12 / jar)</label>
+                    <input type="number" id="honeyQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <div class="order-row" data-price="6.5">
+                    <label for="tomatoQty">🍅 Heirloom Tomatoes ($6.50 / lb)</label>
+                    <input type="number" id="tomatoQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <div class="order-row" data-price="9">
+                    <label for="breadQty">🍞 Country Sourdough ($9 / loaf)</label>
+                    <input type="number" id="breadQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <div class="order-row" data-price="7">
+                    <label for="eggsQty">🥚 Free-Range Eggs ($7 / dozen)</label>
+                    <input type="number" id="eggsQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <div class="order-row" data-price="8">
+                    <label for="jamQty">🍓 Strawberry Jam ($8 / jar)</label>
+                    <input type="number" id="jamQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <div class="order-row" data-price="5">
+                    <label for="berryQty">🫐 Fresh Blueberries ($5 / pint)</label>
+                    <input type="number" id="berryQty" class="qty" min="0" value="0">
+                    <span class="line-total">$0.00</span>
+                    </div>
+
+                    <span class="error" id="itemError"></span>
+                </section>
+
+                <!-- SUMMARY -->
+                <section class="order-summary">
+                    <h2>Order Summary</h2>
+                    <p>Subtotal: <span id="subtotal">$0.00</span></p>
+                    <p>Tax (8%): <span id="tax">$0.00</span></p>
+                    <p><strong>Total: <span id="grandTotal">$0.00</span></strong></p>
+                </section>
+
+                <button type="submit" class="btn-submit">Submit Pre-Order</button>
+
+            </form>
+            <section id="confirmation" class="confirmation"></section>
+        </main>
+        <script src=""></script>
+
+    </body>
+</html>
