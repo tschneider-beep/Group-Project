@@ -1,72 +1,168 @@
-    // Update line totals and summary on quantity change
-    var rows = document.querySelectorAll('.order-row');
-    rows.forEach(function(row) {
-      var input = row.querySelector('.qty');
-      var total = row.querySelector('.line-total');
-      var price = parseFloat(row.getAttribute('data-price'));
-      input.addEventListener('input', function() {
-        var qty = Math.max(0, parseInt(this.value) || 0);
-        this.value = qty;
-        total.textContent = '$' + (price * qty).toFixed(2);
-        updateSummary();
-      });
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('#orderForm');
+  const rows = document.querySelectorAll('.order-row');
+
+  const subtotalEl = document.querySelector('#subtotal');
+  const taxEl = document.querySelector('#tax');
+  const grandTotalEl = document.querySelector('#grandTotal');
+  const confirmation = document.querySelector('#confirmation');
+
+  function clearErrors() {
+    document.querySelector('#firstNameError').textContent = '';
+    document.querySelector('#lastNameError').textContent = '';
+    document.querySelector('#emailError').textContent = '';
+    document.querySelector('#dateError').textContent = '';
+    document.querySelector('#locationError').textContent = '';
+    document.querySelector('#itemError').textContent = '';
+
+
+    confirmation.textContent = '';
+  }
+
+  function calculateTotals() {
+    let subtotal = 0;
+
+    rows.forEach(function (row) {
+      const price = Number(row.dataset.price);
+      const qtyInput = row.querySelector('.qty');
+      const lineTotalEl = row.querySelector('.line-total');
+
+      let quantity = Number(qtyInput.value);
+
+      if (qtyInput.value === '' || quantity < 0 || !Number.isInteger(quantity)) {
+        quantity = 0;
+      }
+
+      const lineTotal = price * quantity;
+
+      if (quantity > 0) {
+        row.classList.add('active');
+      } else {
+        row.classList.remove('active');
+      }
+
+      lineTotalEl.textContent = '$' + lineTotal.toFixed(2);
+      subtotal += lineTotal;
     });
 
-    function updateSummary() {
-      var subtotal = 0;
-      rows.forEach(function(row) {
-        var qty = parseInt(row.querySelector('.qty').value) || 0;
-        var price = parseFloat(row.getAttribute('data-price'));
-        subtotal += price * qty;
-      });
-      var tax = subtotal * 0.08;
-      document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-      document.getElementById('tax').textContent = '$' + tax.toFixed(2);
-      document.getElementById('grandTotal').textContent = '$' + (subtotal + tax).toFixed(2);
+    const tax = subtotal * 0.08;
+    const grandTotal = subtotal + tax;
+
+    subtotalEl.textContent = '$' + subtotal.toFixed(2);
+    taxEl.textContent = '$' + tax.toFixed(2);
+    grandTotalEl.textContent = '$' + grandTotal.toFixed(2);
+  }
+
+  rows.forEach(function (row) {
+    const qtyInput = row.querySelector('.qty');
+
+    qtyInput.addEventListener('focus', function () {
+      if (this.value === '0') {
+        this.value = '';
+      }
+    });
+
+    qtyInput.addEventListener('input', function () {
+      calculateTotals();
+    });
+
+    qtyInput.addEventListener('blur', function () {
+      if (this.value === '') {
+        this.value = 0;
+      }
+      calculateTotals();
+    });
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearErrors();
+
+    let isValid = true;
+    let hasItem = false;
+
+    const firstName = document.querySelector('#firstName');
+    const lastName = document.querySelector('#lastName');
+    const email = document.querySelector('#email');
+    const pickupDate = document.querySelector('#pickupDate');
+    const pickupLocation = document.querySelector('#pickupLocation');
+
+    if (firstName.value.trim() === '') {
+      document.querySelector('#firstNameError').textContent = 'First name is required.';
+      isValid = false;
     }
 
-    // Form submission
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var valid = true;
+    if (lastName.value.trim() === '') {
+      document.querySelector('#lastNameError').textContent = 'Last name is required.';
+      isValid = false;
+    }
 
-      function showError(id, msg) {
-        document.getElementById(id).textContent = msg;
-        valid = false;
+    if (email.value.trim() === '') {
+      document.querySelector('#emailError').textContent = 'Email is required.';
+      isValid = false;
+    }
+
+    if (pickupDate.value === '') {
+      document.querySelector('#dateError').textContent = 'Pickup date is required.';
+      isValid = false;
+    }
+
+    if (pickupLocation.value === '') {
+      document.querySelector('#locationError').textContent = 'Pickup location is required.';
+      isValid = false;
+    }
+
+    rows.forEach(function (row) {
+      const qtyInput = row.querySelector('.qty');
+      const quantity = Number(qtyInput.value);
+
+      if (quantity > 0) {
+        hasItem = true;
       }
-      function clearError(id) {
-        document.getElementById(id).textContent = '';
+
+      if (qtyInput.value === '' || quantity < 0 || !Number.isInteger(quantity)) {
+        document.querySelector('#itemError').textContent =
+          'Quantities must be positive whole numbers.';
+        isValid = false;
       }
-
-      var firstName = document.getElementById('firstName').value.trim();
-      var lastName  = document.getElementById('lastName').value.trim();
-      var email     = document.getElementById('email').value.trim();
-      var date      = document.getElementById('pickupDate').value;
-      var location  = document.getElementById('pickupLocation').value;
-
-      firstName ? clearError('firstNameError') : showError('firstNameError', 'First name is required.');
-      lastName  ? clearError('lastNameError')  : showError('lastNameError',  'Last name is required.');
-      email && /\S+@\S+\.\S+/.test(email) ? clearError('emailError') : showError('emailError', 'A valid email is required.');
-      date      ? clearError('dateError')      : showError('dateError',      'Please select a pickup date.');
-      location  ? clearError('locationError')  : showError('locationError',  'Please choose a pickup location.');
-
-      var hasItems = Array.from(rows).some(function(r) {
-        return parseInt(r.querySelector('.qty').value) > 0;
-      });
-      hasItems ? clearError('itemError') : showError('itemError', 'Please add at least one item.');
-
-      if (!valid) return;
-
-      var total = document.getElementById('grandTotal').textContent;
-      var conf  = document.getElementById('confirmation');
-      conf.innerHTML =
-        '<h2>Order Confirmed!</h2>' +
-        '<p>Thanks, ' + firstName + '! Your pre-order of <strong>' + total + '</strong> is set for ' +
-        '<strong>' + date + '</strong> at <strong>' + location + '</strong>.</p>' +
-        '<p>A confirmation will be sent to <strong>' + email + '</strong>.</p>';
-      conf.style.display = 'block';
-      this.reset();
-      rows.forEach(function(row) { row.querySelector('.line-total').textContent = '$0.00'; });
-      updateSummary();
     });
- 
+
+    if (!hasItem) {
+      document.querySelector('#itemError').textContent =
+        'Please select at least one product.';
+      isValid = false;
+    }
+
+    calculateTotals();
+
+    if (isValid) {
+      // CLEAR old content safely
+      confirmation.textContent = '';
+
+      // CREATE ELEMENTS
+      const title = document.createElement('h2');
+      title.textContent = 'Order Confirmed!';
+
+      const message = document.createElement('p');
+      message.textContent = `Thank you, ${firstName.value} ${lastName.value}. Your pre-order has been received.`;
+
+      const location = document.createElement('p');
+      location.textContent = `Pickup Location: ${pickupLocation.value}`;
+
+      const date = document.createElement('p');
+      date.textContent = `Pickup Date: ${pickupDate.value}`;
+
+      const total = document.createElement('p');
+      total.textContent = `Your grand total is ${grandTotalEl.textContent}.`;
+
+      // APPEND
+      confirmation.appendChild(title);
+      confirmation.appendChild(message);
+      confirmation.appendChild(location);
+      confirmation.appendChild(date);
+      confirmation.appendChild(total);
+    }
+  });
+
+  calculateTotals();
+}); 
