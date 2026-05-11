@@ -136,10 +136,10 @@ document.addEventListener('DOMContentLoaded', function () {
     calculateTotals();
 
     if (isValid) {
-      // CLEAR old content safely
+      
       confirmation.textContent = '';
 
-      // CREATE ELEMENTS
+      
       const title = document.createElement('h2');
       title.textContent = 'Order Confirmed!';
 
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const total = document.createElement('p');
       total.textContent = `Your grand total is ${grandTotalEl.textContent}.`;
 
-      // APPEND
+      
       confirmation.appendChild(title);
       confirmation.appendChild(message);
       confirmation.appendChild(location);
